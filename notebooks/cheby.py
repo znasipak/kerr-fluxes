@@ -24,6 +24,18 @@ def cheby_D_jit(n, dtype = np.float64):
 #        nb.float64[:,:](nb.float64[:], nb.float64[:], nb.float64[:,:]),
 #        nb.complex128[:,:](nb.complex128[:], nb.float64[:], nb.float64[:,:])], cache=True)
 def clenshaw_evaluation(coeffs, domain, x):
+    """
+    Clenshaw evaluation for the Chebyshev series given the coefficients of the series, the domain of the series and the points to evaluate the series at.
+
+    Parameters
+    ----------
+    coeffs : np.ndarray
+        Coefficients of the Chebyshev series.
+    domain : np.ndarray
+        Domain of the Chebyshev series.
+    x : np.ndarray
+        Points to evaluate the Chebyshev series at.
+    """
     # x = 0.5*((domain[1] - domain[0])*x_shift + domain[1] + domain[0])
     x_shift = (2.*x - (domain[1] + domain[0]))/(domain[1] - domain[0])
     N = len(coeffs)
@@ -43,6 +55,20 @@ def clenshaw_evaluation(coeffs, domain, x):
 #        nb.float64[:,:,:](nb.float64[:,:], nb.float64[:], nb.float64[:,:]),
 #        nb.complex128[:,:,:](nb.complex128[:,:], nb.float64[:], nb.float64[:,:])], cache=True)
 def clenshaw_evaluation_2d(coeffs, domain, x):
+    """
+    Clenshaw evaluation for multiple Chebyshev series given the coefficients of each series, the domain of the series 
+    and the points to evaluate all of the series at. Note that all of the series must be defined on the same domain and
+    have the same number of terms.
+
+    Parameters
+    ----------
+    coeffs : np.ndarray
+        Two-dimensional array of coefficients, where each row is different Chebyshev series.
+    domain : np.ndarray
+        Domain of all the Chebyshev series.
+    x : np.ndarray
+        Points to evaluate every Chebyshev series at.
+    """
     # x = 0.5*((domain[1] - domain[0])*x_shift + domain[1] + domain[0])
     x_shift = (2.*x - (domain[1] + domain[0]))/(domain[1] - domain[0])
     
@@ -64,6 +90,19 @@ def clenshaw_evaluation_2d(coeffs, domain, x):
 #        nb.float64[:,:](nb.float64[:], nb.float64[:], nb.float64[:,:]),
 #        nb.complex128[:,:](nb.complex128[:], nb.float64[:], nb.float64[:,:])], cache=True)
 def clenshaw_deriv_evaluation(coeffs, domain, x):
+    """
+    Clenshaw evaluation for the derivative of the Chebyshev series given the coefficients of the series, 
+    the domain of the series and the points to evaluate the series at.
+
+    Parameters
+    ----------
+    coeffs : np.ndarray
+        Coefficients of the Chebyshev series.
+    domain : np.ndarray
+        Domain of the Chebyshev series.
+    x : np.ndarray
+        Points to evaluate the Chebyshev series at.
+    """
     x_shift = (2.*x - (domain[1] + domain[0]))/(domain[1] - domain[0])
     dx = 2./(domain[1] - domain[0])
     N = len(coeffs)
@@ -88,6 +127,20 @@ def clenshaw_deriv_evaluation(coeffs, domain, x):
 #        nb.float64[:,:,:](nb.float64[:,:], nb.float64[:], nb.float64[:,:]),
 #        nb.complex128[:,:,:](nb.complex128[:,:], nb.float64[:], nb.float64[:,:])], cache=True)
 def clenshaw_deriv_evaluation_2d(coeffs, domain, x):
+    """
+    Clenshaw evaluation for the derivative of multiple Chebyshev series given the coefficients of each series, the domain of the series 
+    and the points to evaluate all of the series at. Note that all of the series must be defined on the same domain and
+    have the same number of terms.
+
+    Parameters
+    ----------
+    coeffs : np.ndarray
+        Two-dimensional array of coefficients, where each row is different Chebyshev series.
+    domain : np.ndarray
+        Domain of all the Chebyshev series.
+    x : np.ndarray
+        Points to evaluate every Chebyshev series at.
+    """
     x_shift = (2.*x - (domain[1] + domain[0]))/(domain[1] - domain[0])
     dx = 2./(domain[1] - domain[0])
     
@@ -284,7 +337,7 @@ class Chebyshev2D(ChebyshevNP):
         dc = chebder(self.coef, m = 2, scl = self.dy, axis = 1)
         return chebval2d(x, y, dc)
     
-    def deriv_yy(self, x, y):
+    def deriv_xy(self, x, y):
         x, y = self.transform_args(x, y)
         dc = chebder(self.coef, m = 1, scl = self.dy, axis = 1)
         dc = chebder(dc, m = 1, scl = self.dx, axis = 0)
